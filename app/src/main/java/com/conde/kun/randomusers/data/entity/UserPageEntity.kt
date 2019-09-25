@@ -1,5 +1,5 @@
 package com.conde.kun.randomusers.data.entity
 
-class Info(val page: Int?, val seed: String?, val results: Int?)
+data class Info(val page: Int?, val seed: String?, val results: Int?)
 
-class UserPageEntity(val info: Info?, val results: Collection<UserEntity>)
+data class UserPageEntity(val info: Info?, val results: Collection<UserEntity>?)

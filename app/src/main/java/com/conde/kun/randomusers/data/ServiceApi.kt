@@ -8,6 +8,7 @@ import retrofit2.http.Query
 interface ServiceApi {
 
     @GET("/api/")
-    fun getUsers(@Query("page") pageNumber: Int, @Query("seed") seed: String, @Query("results") results: Int): Observable<UserPageEntity>
+    suspend fun getUsers(@Query("page") pageNumber: Int, @Query("seed") seed: String, @Query("results") results: Int): UserPageEntity
+    //fun getUsers(@Query("page") pageNumber: Int, @Query("seed") seed: String, @Query("results") results: Int): Observable<UserPageEntity>
 
 }

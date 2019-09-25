@@ -1,8 +1,10 @@
 package com.conde.kun.randomusers.view.user.userlist
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.conde.kun.randomusers.data.ServiceFacade
 import com.conde.kun.randomusers.domain.model.Location
 import com.conde.kun.randomusers.domain.model.User
 import kotlinx.coroutines.launch
@@ -11,6 +13,7 @@ class UserListViewModel : ViewModel() {
 
     val viewState: MutableLiveData<UserListViewState> =
         MutableLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
+    val serviceFacade: ServiceFacade = ServiceFacade()
 
     fun getInitialViewState(): UserListViewState {
         val viewState = UserListViewState()
@@ -18,6 +21,11 @@ class UserListViewModel : ViewModel() {
     }
 
     fun onViewInit() {
+        viewModelScope.launch {
+            val usersPage = serviceFacade.getUsers(1, "seed")
+            Log.d("jlk", "got users")
+        }
+        /*
         viewModelScope.launch {
             val usersList = ArrayList<User>()
             val user = User(
@@ -42,6 +50,13 @@ class UserListViewModel : ViewModel() {
             viewState.value?.usersList = usersList
             viewState.postValue(viewState.value)
         }
+        */
+    }
 
+    fun onRefresh() {
+        viewModelScope.launch {
+            val usersPage = serviceFacade.getUsers(1, "seed")
+            Log.d("jlk", "got users")
+        }
     }
 }

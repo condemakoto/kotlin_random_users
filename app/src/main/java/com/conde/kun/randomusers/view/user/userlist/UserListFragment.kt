@@ -32,7 +32,7 @@ class UserListFragment: Fragment() {
         mLayoutManager = GridLayoutManager(activity, IMAGES_PER_ROW)
         recyclerView.adapter = userAdapter
         recyclerView.layoutManager = mLayoutManager
-        //swipeRefreshLayout.setOnRefreshListener {  }
+        swipeRefreshLayout.setOnRefreshListener { viewModel.onRefresh() }
         viewModel.onViewInit()
         viewModel.viewState.observe(this, viewStateObserver)
     }

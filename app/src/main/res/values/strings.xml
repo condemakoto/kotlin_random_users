@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Random Users</string>
+
+
+    <string name="loading">Loading...</string>
+    <string name="txtUsername">Username:</string>
+    <string name="txtFirstName">First Name:</string>
+    <string name="txtLastName">Last Name:</string>
+    <string name="txtEmail">Email:</string>
+
+    <string name="txtGender">Gender:</string>
+    <string name="txtPhone">Phone:</string>
+    <string name="txtLocation">Location:</string>
+
+    <string name="txtFormattedName" formatted="false">%s, %s %s</string>
+    <string name="txtUserDetail">User Detail</string>
+    <string name="txtUserList">User List</string>
+    <string name="errorNoUsers">There are no users available to display...</string>
+    <string name="errorUserRequest">Error retrieving users. Try again refreshing the view.</string>
+
+    <string name="txtVersion">Version %s</string>
+</resources>

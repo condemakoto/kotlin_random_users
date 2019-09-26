@@ -1,62 +1,52 @@
 package com.conde.kun.randomusers.view.user.userlist
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.conde.kun.randomusers.data.ServiceFacade
-import com.conde.kun.randomusers.domain.model.Location
+import androidx.lifecycle.*
+import com.conde.kun.core.domain.Resource
+import com.conde.kun.core.domain.Status
 import com.conde.kun.randomusers.domain.model.User
-import kotlinx.coroutines.launch
+import com.conde.kun.randomusers.domain.usecase.GetUserUseCase
 
 class UserListViewModel : ViewModel() {
 
-    val viewState: MutableLiveData<UserListViewState> =
-        MutableLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
-    val serviceFacade: ServiceFacade = ServiceFacade()
+    val viewState: MediatorLiveData<UserListViewState> =
+        MediatorLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
+    var pageNum: Int = 1
 
-    fun getInitialViewState(): UserListViewState {
+    private val getUserUseCase: GetUserUseCase = GetUserUseCase(viewModelScope)
+
+    private fun getInitialViewState(): UserListViewState {
         val viewState = UserListViewState()
+        viewState.loading = true
+        viewState.error = false
         return viewState
     }
 
     fun onViewInit() {
-        viewModelScope.launch {
-            val usersPage = serviceFacade.getUsers(1, "seed")
-            Log.d("jlk", "got users")
-        }
-        /*
-        viewModelScope.launch {
-            val usersList = ArrayList<User>()
-            val user = User(
-                "username",
-                "title",
-                "first name",
-                "last name",
-                "masculine",
-                "https://scontent.faep9-2.fna.fbcdn.net/v/t1.0-0/p206x206/56848170_2341937865858812_1914529376393756672_n.jpg?_nc_cat=105&_nc_oc=AQnMYXYNFGr0eKD6sz_f2q2wFHhV_vx9paOPofBRXyXybXFlKocEuLv8xiXPDEZgM8c&_nc_ht=scontent.faep9-2.fna&oh=3531dd5b7b04ab1e1f17871f187df311&oe=5E3CB5FA",
-                "https://scontent.faep9-2.fna.fbcdn.net/v/t1.0-0/p206x206/56848170_2341937865858812_1914529376393756672_n.jpg?_nc_cat=105&_nc_oc=AQnMYXYNFGr0eKD6sz_f2q2wFHhV_vx9paOPofBRXyXybXFlKocEuLv8xiXPDEZgM8c&_nc_ht=scontent.faep9-2.fna&oh=3531dd5b7b04ab1e1f17871f187df311&oe=5E3CB5FA",
-                "lala@hotmail.com",
-                "16276127612",
-                Location("street", "city", "state", "postCode")
-            )
-            usersList.add(user)
-            usersList.add(user.copy())
-            usersList.add(user.copy())
-            usersList.add(user.copy())
-            usersList.add(user.copy())
-            usersList.add(user.copy())
-
-            viewState.value?.usersList = usersList
-            viewState.postValue(viewState.value)
-        }
-        */
+        pageNum = 1
+        retrieveUsers()
     }
 
     fun onRefresh() {
-        viewModelScope.launch {
-            val usersPage = serviceFacade.getUsers(1, "seed")
-            Log.d("jlk", "got users")
+        pageNum = 1
+        retrieveUsers()
+    }
+
+    private fun retrieveUsers() {
+
+        viewState.addSource(getUserUseCase.execute(GetUserUseCase.Param(pageNum))) { resource: Resource<List<User>> ->
+            val value = viewState.value ?: getInitialViewState()
+            when (resource.status) {
+                Status.LOADING -> value.loading = true
+                Status.SUCCESS -> {
+                    value.loading = false
+                    value.usersList = resource.data
+                }
+                Status.ERROR -> {
+                    value.loading = false
+                    value.error = true
+                }
+            }
+            viewState.value = value
         }
     }
 }

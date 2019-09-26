@@ -1,6 +1,5 @@
 package com.conde.kun.randomusers.view.user.userlist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 class UserAdapter : RecyclerView.Adapter<ViewHolder>() {
 
-    var usersList: ArrayList<User>? = null
+    var usersList: List<User>? = null
         set(value) {
             field = value
             notifyDataSetChanged()

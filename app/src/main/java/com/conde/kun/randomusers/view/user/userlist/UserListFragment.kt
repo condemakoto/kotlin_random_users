@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.conde.kun.randomusers.R
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
 
 class UserListFragment: Fragment() {
@@ -40,6 +41,10 @@ class UserListFragment: Fragment() {
     val viewStateObserver = Observer<UserListViewState> {
         viewState ->
             userAdapter.usersList = viewState?.usersList
+            swipeRefreshLayout.isRefreshing = viewState?.loading ?: false
+            if (viewState?.error ?: false) {
+                Snackbar.make(this.view!!, "Error", Snackbar.LENGTH_LONG).show()
+            }
     }
 
 }

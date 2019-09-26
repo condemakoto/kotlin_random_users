@@ -13,20 +13,27 @@ import kotlinx.coroutines.*
 
 class SplashActivity : AppCompatActivity() {
 
-    val viewModel: SplashViewModel by lazy { ViewModelProviders.of(this).get(SplashViewModel::class.java) }
+    val viewModel: SplashViewModel by lazy {
+        ViewModelProviders.of(this).get(SplashViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
         supportActionBar?.hide()
-        packageManager?.getPackageInfo(packageName, 0)?.versionName.let { versionTV.text = getString(R.string.txtVersion, it) }
+        packageManager?.getPackageInfo(packageName, 0)?.versionName.let {
+            versionTV.text = getString(R.string.txtVersion, it)
+        }
         viewModel.viewState.observe(this, splashViewStateObserver)
         viewModel.onViewInit()
     }
 
-    val splashViewStateObserver = Observer<SplashViewState> {
-        viewState -> if (viewState.showSplash) startActivity(UserActivity.newIntent(this))
+    val splashViewStateObserver = Observer<SplashViewState> { viewState ->
+        if (viewState.showSplash) {
+            startActivity(UserActivity.newIntent(this))
+            finish()
+        }
     }
 
 }

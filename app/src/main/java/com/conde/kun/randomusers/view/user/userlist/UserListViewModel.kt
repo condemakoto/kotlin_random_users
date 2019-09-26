@@ -1,5 +1,6 @@
 package com.conde.kun.randomusers.view.user.userlist
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.conde.kun.core.domain.Resource
 import com.conde.kun.core.domain.Status
@@ -11,6 +12,8 @@ class UserListViewModel : ViewModel() {
     val viewState: MediatorLiveData<UserListViewState> =
         MediatorLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
     var pageNum: Int = 1
+    var loading = false
+    val VISIBLE_THRESHOLD = 2;
 
     private val getUserUseCase: GetUserUseCase = GetUserUseCase(viewModelScope)
 
@@ -31,6 +34,12 @@ class UserListViewModel : ViewModel() {
         retrieveUsers()
     }
 
+    fun checkRefreshCondition(visibleItemCount: Int, totalItemCount: Int, firstVisibleItem: Int) {
+        if (pageNum > 1 && !loading && totalItemCount - visibleItemCount <= firstVisibleItem + VISIBLE_THRESHOLD) {
+            retrieveUsers()
+        }
+    }
+
     private fun retrieveUsers() {
 
         viewState.addSource(getUserUseCase.execute(GetUserUseCase.Param(pageNum))) { resource: Resource<List<User>> ->
@@ -39,7 +48,15 @@ class UserListViewModel : ViewModel() {
                 Status.LOADING -> value.loading = true
                 Status.SUCCESS -> {
                     value.loading = false
-                    value.usersList = resource.data
+                    if (pageNum == 1) {
+                        value.usersList = resource.data
+                    } else {
+                        val newList = ArrayList<User>()
+                        newList.addAll(value.usersList!!)
+                        newList.addAll(resource.data!!)
+                        value.usersList = newList
+                    }
+                    pageNum++
                 }
                 Status.ERROR -> {
                     value.loading = false

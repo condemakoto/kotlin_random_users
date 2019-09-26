@@ -1,6 +1,8 @@
 package com.conde.kun.randomusers.view.user.userlist
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,16 +10,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.conde.kun.randomusers.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
 
-class UserListFragment: Fragment() {
+class UserListFragment : Fragment() {
 
     val IMAGES_PER_ROW = 3
     lateinit var userAdapter: UserAdapter
     lateinit var mLayoutManager: GridLayoutManager
-    val viewModel: UserListViewModel by lazy { ViewModelProviders.of(this).get(UserListViewModel::class.java)}
+    val viewModel: UserListViewModel by lazy {
+        ViewModelProviders.of(this).get(UserListViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,15 +41,28 @@ class UserListFragment: Fragment() {
         swipeRefreshLayout.setOnRefreshListener { viewModel.onRefresh() }
         viewModel.onViewInit()
         viewModel.viewState.observe(this, viewStateObserver)
+
+        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                checkRefreshCondition()
+            }
+        })
     }
 
-    val viewStateObserver = Observer<UserListViewState> {
-        viewState ->
-            userAdapter.usersList = viewState?.usersList
-            swipeRefreshLayout.isRefreshing = viewState?.loading ?: false
-            if (viewState?.error ?: false) {
-                Snackbar.make(this.view!!, "Error", Snackbar.LENGTH_LONG).show()
-            }
+    fun checkRefreshCondition() {
+        val visibleItemCount = recyclerView.childCount;
+        val totalItemCount = mLayoutManager.itemCount
+        val firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition()
+        viewModel.checkRefreshCondition(visibleItemCount, totalItemCount, firstVisibleItem)
+    }
+
+    val viewStateObserver = Observer<UserListViewState> { viewState ->
+        userAdapter.usersList = viewState?.usersList
+        swipeRefreshLayout.isRefreshing = viewState?.loading ?: false
+        if (viewState?.error ?: false) {
+            Snackbar.make(this.view!!, "Error", Snackbar.LENGTH_LONG).show()
+        }
     }
 
 }

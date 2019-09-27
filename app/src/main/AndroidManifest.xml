@@ -21,7 +21,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".view.user.UserActivity">
+        <activity android:name=".view.user.userlist.UserActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".view.user.userdetail.UserDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

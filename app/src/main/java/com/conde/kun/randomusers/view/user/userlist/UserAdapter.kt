@@ -14,7 +14,8 @@ class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val userNameView = view.userNameTV
 }
 
-class UserAdapter : RecyclerView.Adapter<ViewHolder>() {
+class UserAdapter(val onUserSelectListener: UserAdapter.OnUserSelectListener) :
+    RecyclerView.Adapter<ViewHolder>() {
 
     var usersList: List<User>? = null
         set(value) {
@@ -23,7 +24,13 @@ class UserAdapter : RecyclerView.Adapter<ViewHolder>() {
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false))
+        return ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_user,
+                parent,
+                false
+            )
+        )
     }
 
     override fun getItemCount(): Int {
@@ -35,8 +42,15 @@ class UserAdapter : RecyclerView.Adapter<ViewHolder>() {
         holder.userNameView.text = user.firstName
         Picasso
             .with(holder.imageView.context)
-            .load(user.thumbnailImageUrl)
+            .load(user.bigImageUrl)
             .into(holder.imageView)
+        holder.itemView.tag = user
+        holder.itemView.setOnClickListener { view ->
+            view.tag?.let { onUserSelectListener.onUserSelected(it as User) }
+        }
+    }
 
+    interface OnUserSelectListener {
+        fun onUserSelected(user: User)
     }
 }

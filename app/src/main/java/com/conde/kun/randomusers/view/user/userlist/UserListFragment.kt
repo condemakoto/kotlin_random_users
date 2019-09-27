@@ -1,34 +1,26 @@
 package com.conde.kun.randomusers.view.user.userlist
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.conde.kun.randomusers.R
+import com.conde.kun.randomusers.domain.model.User
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
 import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class UserListFragment : Fragment() {
+class UserListFragment : Fragment(), UserAdapter.OnUserSelectListener {
 
     val IMAGES_PER_ROW = 3
     lateinit var userAdapter: UserAdapter
     lateinit var mLayoutManager: GridLayoutManager
 
-    //val viewModel: UserListViewModel by viewModel()
     private lateinit var viewModel: UserListViewModel
-    /*
-    val viewModel: UserListViewModel by lazy {
-        ViewModelProviders.of(this).get(UserListViewModel::class.java)
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +33,7 @@ class UserListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userAdapter = UserAdapter()
+        userAdapter = UserAdapter(this)
         mLayoutManager = GridLayoutManager(activity, IMAGES_PER_ROW)
         recyclerView.adapter = userAdapter
         recyclerView.layoutManager = mLayoutManager
@@ -70,6 +62,14 @@ class UserListFragment : Fragment() {
         if (viewState?.error ?: false) {
             Snackbar.make(this.view!!, "Error", Snackbar.LENGTH_LONG).show()
         }
+    }
+
+    override fun onUserSelected(user: User) {
+        (activity as FragmentInterface).onUserSelected(user)
+    }
+
+    interface FragmentInterface {
+        fun onUserSelected(user: User)
     }
 
 }

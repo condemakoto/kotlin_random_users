@@ -1,13 +1,14 @@
-package com.conde.kun.randomusers.view.user
+package com.conde.kun.randomusers.view.user.userlist
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.conde.kun.randomusers.R
-import com.conde.kun.randomusers.view.user.userlist.UserListFragment
+import com.conde.kun.randomusers.domain.model.User
+import com.conde.kun.randomusers.view.user.userdetail.UserDetailActivity
 
-class UserActivity : AppCompatActivity() {
+class UserActivity : AppCompatActivity(), UserListFragment.FragmentInterface {
 
     companion object {
         @JvmStatic
@@ -31,5 +32,8 @@ class UserActivity : AppCompatActivity() {
         ft.commit()
     }
 
+    override fun onUserSelected(user: User) {
+        startActivity(UserDetailActivity.getIntent(this, user))
+    }
 
 }

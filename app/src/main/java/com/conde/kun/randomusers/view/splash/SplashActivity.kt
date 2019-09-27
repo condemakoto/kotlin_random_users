@@ -1,15 +1,13 @@
 package com.conde.kun.randomusers.view.splash
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.conde.kun.randomusers.R
-import com.conde.kun.randomusers.view.user.UserActivity
+import com.conde.kun.randomusers.view.user.userlist.UserActivity
 
 import kotlinx.android.synthetic.main.activity_splash.*
-import kotlinx.coroutines.*
 
 class SplashActivity : AppCompatActivity() {
 

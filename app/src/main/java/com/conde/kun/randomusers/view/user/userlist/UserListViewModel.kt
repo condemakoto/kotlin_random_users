@@ -7,15 +7,13 @@ import com.conde.kun.core.domain.Status
 import com.conde.kun.randomusers.domain.model.User
 import com.conde.kun.randomusers.domain.usecase.GetUserUseCase
 
-class UserListViewModel : ViewModel() {
+class UserListViewModel(val getUserUseCase: GetUserUseCase) : ViewModel() {
 
     val viewState: MediatorLiveData<UserListViewState> =
         MediatorLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
     var pageNum: Int = 1
     var loading = false
-    val VISIBLE_THRESHOLD = 2;
-
-    private val getUserUseCase: GetUserUseCase = GetUserUseCase(viewModelScope)
+    val VISIBLE_THRESHOLD = 2
 
     private fun getInitialViewState(): UserListViewState {
         val viewState = UserListViewState()
@@ -42,7 +40,7 @@ class UserListViewModel : ViewModel() {
 
     private fun retrieveUsers() {
 
-        viewState.addSource(getUserUseCase.execute(GetUserUseCase.Param(pageNum))) { resource: Resource<List<User>> ->
+        viewState.addSource(getUserUseCase.execute(viewModelScope, GetUserUseCase.Param(pageNum))) { resource: Resource<List<User>> ->
             val value = viewState.value ?: getInitialViewState()
             when (resource.status) {
                 Status.LOADING -> value.loading = true

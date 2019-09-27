@@ -5,9 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-abstract class BaseUseCase<T, P> (val coroutineScope: CoroutineScope) {
+abstract class BaseUseCase<T, P> () {
 
-    fun execute(param: P): LiveData<Resource<T>> {
+    lateinit var coroutineScope: CoroutineScope
+
+    constructor(coroutineScope: CoroutineScope) : this() {
+        this.coroutineScope = coroutineScope
+    }
+
+    fun execute(coroutineScope: CoroutineScope, param: P): LiveData<Resource<T>> {
+        this.coroutineScope = coroutineScope
+        return execute(param)
+    }
+
+    private fun execute(param: P): LiveData<Resource<T>> {
         val response: MutableLiveData<Resource<T>> = MutableLiveData()
         response.postValue(Resource.loading(null))
         coroutineScope.launch {

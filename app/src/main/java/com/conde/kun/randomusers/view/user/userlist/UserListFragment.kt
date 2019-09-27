@@ -14,21 +14,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.conde.kun.randomusers.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UserListFragment : Fragment() {
 
     val IMAGES_PER_ROW = 3
     lateinit var userAdapter: UserAdapter
     lateinit var mLayoutManager: GridLayoutManager
+
+    //val viewModel: UserListViewModel by viewModel()
+    private lateinit var viewModel: UserListViewModel
+    /*
     val viewModel: UserListViewModel by lazy {
         ViewModelProviders.of(this).get(UserListViewModel::class.java)
-    }
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = getViewModel()
         return inflater.inflate(R.layout.fragment_user_list, container, false)
     }
 

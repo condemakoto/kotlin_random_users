@@ -44,9 +44,6 @@ class UserDetailAdapter(val withPicture: Boolean, val user: User) :
     }
 
     override fun getItemCount(): Int {
-        if (user == null) {
-            return 0
-        }
         return if (withPicture) 5 else 4
     }
 
@@ -66,9 +63,9 @@ class UserDetailAdapter(val withPicture: Boolean, val user: User) :
             }
         }
 
-        holder.title?.text = context.getString(titles[position])
-        holder.detail?.text = values[position]
-        holder.divider?.visibility = if (position + 1 == itemCount) View.GONE else View.VISIBLE
+        holder.title?.text = context.getString(titles[arrayPosition])
+        holder.detail?.text = values[arrayPosition]
+        holder.divider?.visibility = if (arrayPosition + 1 == itemCount) View.GONE else View.VISIBLE
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -2,10 +2,11 @@ package com.conde.kun.core.domain
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.conde.kun.core.error.BaseError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-abstract class BaseUseCase<T, P> () {
+abstract class BaseUseCase<T, P>() {
 
     lateinit var coroutineScope: CoroutineScope
 
@@ -25,9 +26,14 @@ abstract class BaseUseCase<T, P> () {
             try {
                 val data = getData(param)
                 response.postValue(Resource.success(data))
-            } catch(ex: Exception) {
-                //TODO: get the error and set the response in the liveData.
-                response.postValue(Resource.error("service error", null))
+            } catch (ex: Exception) {
+                val error: BaseError =
+                if (ex is BaseError) {
+                    ex
+                } else {
+                    BaseError()
+                }
+                response.postValue(Resource.error(error))
             }
         }
 

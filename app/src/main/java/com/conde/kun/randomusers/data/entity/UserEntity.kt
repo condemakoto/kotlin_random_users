@@ -1,6 +1,8 @@
 package com.conde.kun.randomusers.data.entity
 
-data class Location(val street: String?, val city: String?, val state: String?, val postCode: String?)
+data class Street(val number: Int?, val name: String?)
+
+data class Location(val street: Street?, val city: String?, val state: String?, val postCode: String?)
 
 data class Pictures(val large: String?, val medium: String?, val thumbnail: String?)
 

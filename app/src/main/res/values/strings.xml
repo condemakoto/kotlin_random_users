@@ -19,4 +19,5 @@
     <string name="errorUserRequest">Error retrieving users. Try again refreshing the view.</string>
 
     <string name="txtVersion">Version %s</string>
+    <string name="title_usersupport">User Support</string>
 </resources>

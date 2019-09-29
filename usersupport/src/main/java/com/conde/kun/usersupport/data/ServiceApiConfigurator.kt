@@ -1,4 +1,4 @@
-package com.conde.kun.randomusers.data
+package com.conde.kun.usersupport.data
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -14,7 +14,7 @@ import java.util.*
 class ServiceApiConfigurator {
 
     var serviceApi: ServiceApi
-    val API_BASE_URL: String = "https://randomuser.me"
+    val API_BASE_URL: String = "http://sakana.com.ar"
 
     init {
         val gsonBuilder = GsonBuilder()

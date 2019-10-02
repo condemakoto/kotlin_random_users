@@ -1,21 +1,19 @@
 package com.conde.kun.randomusers.view.user.userlist
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.conde.kun.core.domain.Resource
 import com.conde.kun.core.domain.Status
+import com.conde.kun.core.view.BaseViewModel
 import com.conde.kun.randomusers.domain.model.User
 import com.conde.kun.randomusers.domain.usecase.GetUserUseCase
 
-class UserListViewModel(val getUserUseCase: GetUserUseCase) : ViewModel() {
+class UserListViewModel(private val getUserUseCase: GetUserUseCase) : BaseViewModel<UserListViewState>() {
 
-    val viewState: MediatorLiveData<UserListViewState> =
-        MediatorLiveData<UserListViewState>().apply { postValue(getInitialViewState()) }
     var pageNum: Int = 1
     var loading = false
     val VISIBLE_THRESHOLD = 2
 
-    private fun getInitialViewState(): UserListViewState {
+    override fun getInitialViewState(): UserListViewState {
         val viewState = UserListViewState()
         viewState.loading = true
         viewState.error = false

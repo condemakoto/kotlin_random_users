@@ -2,9 +2,10 @@ package com.conde.kun.usersupport.domain.usecase
 
 import com.conde.kun.core.domain.BaseUseCase
 import com.conde.kun.usersupport.domain.repository.ContactRepository
+import kotlinx.coroutines.CoroutineScope
 
-class SendContactInfoUseCase(val repository: ContactRepository) :
-    BaseUseCase<Boolean, SendContactInfoUseCase.Params>() {
+class SendContactInfoUseCase(coroutineScope: CoroutineScope, val repository: ContactRepository) :
+    BaseUseCase<Boolean, SendContactInfoUseCase.Params>(coroutineScope) {
 
     override suspend fun getData(param: Params): Boolean {
         repository.sendContactInfo(

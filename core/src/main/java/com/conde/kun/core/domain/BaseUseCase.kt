@@ -2,44 +2,40 @@ package com.conde.kun.core.domain
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.conde.kun.core.error.BaseError
+import com.conde.kun.core.error.BaseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-abstract class BaseUseCase<T, P>() {
+abstract class BaseUseCase<T, P>(val coroutineScope: CoroutineScope) {
 
-    lateinit var coroutineScope: CoroutineScope
+    lateinit var response: MutableLiveData<Resource<T>>
 
-    constructor(coroutineScope: CoroutineScope) : this() {
-        this.coroutineScope = coroutineScope
-    }
+    fun execute(param: P): LiveData<Resource<T>> {
+        response = MutableLiveData()
+        response.postValue(Resource.loading(0))
 
-    fun execute(coroutineScope: CoroutineScope, param: P): LiveData<Resource<T>> {
-        this.coroutineScope = coroutineScope
-        return execute(param)
-    }
-
-    private fun execute(param: P): LiveData<Resource<T>> {
-        val response: MutableLiveData<Resource<T>> = MutableLiveData()
-        response.postValue(Resource.loading(null))
         coroutineScope.launch {
             try {
                 val data = getData(param)
                 response.postValue(Resource.success(data))
             } catch (ex: Exception) {
-                val error: BaseError =
-                if (ex is BaseError) {
+                val exception: BaseException =
+                if (ex is BaseException) {
                     ex
                 } else {
-                    BaseError()
+                    BaseException()
                 }
-                response.postValue(Resource.error(error))
+                response.postValue(Resource.error(exception))
             }
         }
 
         return response
     }
 
-    abstract suspend fun getData(param: P): T
+    protected abstract suspend fun getData(param: P): T
+
+    protected fun postProgress(progress: Int) {
+        response.postValue(Resource.loading(progress))
+    }
 
 }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 
-abstract class BaseFragment<VS, VM : BaseViewModel<VS>> : Fragment() {
+abstract class BaseMVVMFragment<VS, VM : BaseViewModel<VS>> : Fragment() {
 
     protected lateinit var viewModel: VM
 

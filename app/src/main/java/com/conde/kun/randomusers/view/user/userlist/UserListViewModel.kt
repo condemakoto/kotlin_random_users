@@ -6,12 +6,18 @@ import com.conde.kun.core.domain.Status
 import com.conde.kun.core.view.BaseViewModel
 import com.conde.kun.randomusers.domain.model.User
 import com.conde.kun.randomusers.domain.usecase.GetUserUseCase
+import com.conde.kun.randomusers.domain.usecase.StoreUserSelectionCountUseCase
 
-class UserListViewModel(private val getUserUseCase: GetUserUseCase) : BaseViewModel<UserListViewState>() {
+class UserListViewModel(
+    private val getUserUseCase: GetUserUseCase,
+    private val storeUserSelectionCountUseCase: StoreUserSelectionCountUseCase
+) : BaseViewModel<UserListViewState>() {
 
     var pageNum: Int = 1
     var loading = false
+    var loadingUserInfo = false
     val VISIBLE_THRESHOLD = 2
+    val showUserDetail by lazy { MutableLiveData<User>() }
 
     override fun getInitialViewState(): UserListViewState {
         val viewState = UserListViewState()
@@ -38,12 +44,16 @@ class UserListViewModel(private val getUserUseCase: GetUserUseCase) : BaseViewMo
 
     private fun retrieveUsers() {
 
-        viewState.addSource(getUserUseCase.execute(viewModelScope, GetUserUseCase.Param(pageNum))) { resource: Resource<List<User>> ->
+        viewState.addSource(
+            getUserUseCase.execute(
+                GetUserUseCase.Param(pageNum)
+            )
+        ) { resource: Resource<List<User>> ->
             val value = viewState.value ?: getInitialViewState()
             when (resource.status) {
-                Status.LOADING -> value.loading = true
+                Status.LOADING -> loading = true
                 Status.SUCCESS -> {
-                    value.loading = false
+                    loading = false
                     if (pageNum == 1) {
                         value.usersList = resource.data
                     } else {
@@ -55,10 +65,32 @@ class UserListViewModel(private val getUserUseCase: GetUserUseCase) : BaseViewMo
                     pageNum++
                 }
                 Status.ERROR -> {
-                    value.loading = false
+                    loading = false
                     value.error = true
                 }
             }
+            value.loading = loading || loadingUserInfo
+            viewState.value = value
+        }
+    }
+
+    fun onUserSelected(user: User) {
+        viewState.addSource(storeUserSelectionCountUseCase.execute(user)) {
+            resource: Resource<Unit> ->
+            val value = viewState.value ?: getInitialViewState()
+            when (resource.status) {
+                Status.LOADING -> loadingUserInfo = true
+                Status.SUCCESS -> {
+                    value.error = false
+                    loadingUserInfo = false
+                    showUserDetail.value = user
+                }
+                Status.ERROR -> {
+                    loadingUserInfo = false
+                    value.error = true
+                }
+            }
+            value.loading = loadingUserInfo || loading
             viewState.value = value
         }
     }

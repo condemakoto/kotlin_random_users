@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Wine Route</string>
+
+    <string name="username_error">Email invalid</string>
+    <string name="password_error">Password exception</string>
+    <string name="loading">Loading</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+
+
+    <string name="error_no_internet">No internet</string>
+    <string name="error_server">Server error</string>
+    <string name="error_invalid_parameters">Invalid parameters</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_user_already_registered">Email already used</string>
+    <string name="error_user_not_confirmed">User not confirmed</string>
+</resources>

@@ -2,16 +2,17 @@ package com.conde.kun.randomusers.view.user.userlist
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.conde.kun.core.view.BaseFragment
+import com.conde.kun.core.view.BaseMVVMFragment
 import com.conde.kun.randomusers.R
 import com.conde.kun.randomusers.domain.model.User
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
-class UserListFragment : BaseFragment<UserListViewState, UserListViewModel> (), UserAdapter.OnUserSelectListener {
+class UserListFragment : BaseMVVMFragment<UserListViewState, UserListViewModel> (), UserAdapter.OnUserSelectListener {
 
     val IMAGES_PER_ROW = 3
     lateinit var userAdapter: UserAdapter
@@ -29,6 +30,7 @@ class UserListFragment : BaseFragment<UserListViewState, UserListViewModel> (), 
         recyclerView.layoutManager = mLayoutManager
         swipeRefreshLayout.setOnRefreshListener { viewModel.onRefresh() }
         viewModel.onViewInit()
+        viewModel.showUserDetail.observe(this, userDetailObserver)
 
         recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -58,8 +60,12 @@ class UserListFragment : BaseFragment<UserListViewState, UserListViewModel> (), 
         }
     }
 
+    private val userDetailObserver = Observer<User> { user ->
+        user?.let{(activity as FragmentInterface).onUserSelected(it)}
+    }
+
     override fun onUserSelected(user: User) {
-        (activity as FragmentInterface).onUserSelected(user)
+        viewModel.onUserSelected(user)
     }
 
     interface FragmentInterface {
